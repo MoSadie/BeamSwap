@@ -1,0 +1,7 @@
+name: DeathSwap
+main: io.github.mosadie.DeathSwap.DeathSwap
+version: 1.0
+commands:
+  dsauth:
+    description: Used to authencate with Beam if you have two-factor auth enabled.
+    usage: /dsauth <auth code>
