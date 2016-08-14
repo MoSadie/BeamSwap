@@ -1,0 +1,8 @@
+name: DeathSwap
+main: io.github.mosadie.DeathSwap.DeathSwap
+version: 1.0
+commands:
+  deathswap:
+    description: Main command of the plugin. Use arguments to control/configure game.
+    usage: /<command> <start or setstreamer or auth or help> <arguments>
+    aliases: ds
