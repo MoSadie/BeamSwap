@@ -19,10 +19,11 @@ public class CommandDeathSwap implements CommandExecutor{
 	}
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String commandLabel, String[] args) {
-		if (!sender.isOp()) {
-			sender.sendMessage("You need to be OP to use this command!");
-			return false;
-		}
+		//if (!sender.isOp() && sender instanceof Player) {
+		//	sender.sendMessage("You need to be OP to use this command!");
+		//	return false;
+		//}
+		ds.getLogger().info(args[0]);
 		switch (args[0].toLowerCase()) {
 		case "start":
 			//TODO logic to start game
@@ -59,6 +60,7 @@ public class CommandDeathSwap implements CommandExecutor{
 				return false;
 			}
 		case "help":
+			ds.getLogger().info("Help");
 			sender.sendMessage(help);
 			return true;
 		default:
