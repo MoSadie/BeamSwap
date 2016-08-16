@@ -1,13 +1,17 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>DeathSwap</groupId>
-  <artifactId>DeathSwap</artifactId>
+  <groupId>BeamSwap</groupId>
+  <artifactId>BeamSwap</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <repositories>
   <repository>
         <id>spigot-repo</id>
         <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
+    <repository>
+            <id>Plugin Metrics</id>
+            <url>http://repo.mcstats.org/content/repositories/public</url>
+        </repository>
   <repository>
     <id>beam-snapshots</id>
     <url>https://maven.beam.pro/content/repositories/snapshots/</url>
@@ -32,6 +36,11 @@
             <version>1.10.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
     </dependency>
+    <dependency>
+            <groupId>org.mcstats.bukkit</groupId>
+            <artifactId>metrics</artifactId>
+            <version>R8-SNAPSHOT</version>
+        </dependency>
   <dependency>
     <groupId>pro.beam</groupId>
     <artifactId>api</artifactId>
@@ -61,6 +70,32 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <artifactSet>
+                        <includes>
+                            <include>org.mcstats.*:*</include>
+                        </includes>
+                    </artifactSet>
+                    <relocations>
+                        <relocation>
+                            <pattern>org.mcstats</pattern>
+                            <shadedPattern>io.github.mosadie.DeathSwap</shadedPattern>
+                        </relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
     </plugins>
   </build>
 </project>
