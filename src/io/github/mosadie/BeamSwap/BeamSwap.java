@@ -75,7 +75,6 @@ public class BeamSwap extends JavaPlugin {
 		this.getCommand("beamswap").setExecutor(new CommandBeamSwap(this));
 		getLogger().info("StartGameThread");
 		Game game = new Game(this);
-		game.run();
 		getLogger().info("AfterThreadCreation");
 		if (config.getBoolean("useBeam")) {
 			beam = new BeamAPI();

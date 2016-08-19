@@ -37,6 +37,7 @@ public class CommandBeamSwap implements CommandExecutor{
 			}
 			if (bs.getServer().getOnlinePlayers().size() == 2) {
 				bs.game.fighters = (Player[]) bs.getServer().getOnlinePlayers().toArray();
+				bs.game.run();
 				bs.game.startGame();
 			}
 			if (bs.getServer().getPlayer(args[1]) == null || bs.getServer().getPlayer(args[2]) == null) {
@@ -45,6 +46,8 @@ public class CommandBeamSwap implements CommandExecutor{
 			}
 			bs.game.fighters[0] = bs.getServer().getPlayer(args[1]);
 			bs.game.fighters[1] = bs.getServer().getPlayer(args[2]);
+			bs.game.run();
+			bs.game.startGame();
 			
 			return true;
 		case "setstreamer":
