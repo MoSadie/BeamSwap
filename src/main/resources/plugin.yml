@@ -3,6 +3,7 @@ main: io.github.mosadie.DeathSwap.DeathSwap
 version: 1.0
 author: MoSadie
 description: This plugin allows you to play the game death swap. It also has Beam Interactive support.
+softdepend: [beambukkit]
 commands:
   deathswap:
     description: Main command of the plugin. Use arguments to control/configure game.

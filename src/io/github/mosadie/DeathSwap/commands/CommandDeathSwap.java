@@ -42,8 +42,11 @@ public class CommandDeathSwap implements CommandExecutor{
 			}
 			
 			if (ds.getServer().getOnlinePlayers().size() == 2) {
-				ds.fighters = (Player[]) ds.getServer().getOnlinePlayers().toArray();
+				ds.fighters = ds.getServer().getOnlinePlayers().toArray(new Player[2]);
+				ds.getLogger().info(ds.fighters[0].toString());
+				ds.getLogger().info(ds.fighters[1].toString());
 				ds.startGame();
+				return true;
 			}
 			if (ds.getServer().getPlayer(args[1]) == null || ds.getServer().getPlayer(args[2]) == null) {
 				sender.sendMessage("One of your player's names is incorrect. Please double check your spelling.");
@@ -57,7 +60,7 @@ public class CommandDeathSwap implements CommandExecutor{
 		case "setstreamer":
 			if (args.length < 2 && sender instanceof Player) {
 				ds.setStreamer((Player)sender);
-				sender.sendMessage("You have been set as the streaming player! To set it to someone else, type /beamswap setstreamer <player>");
+				sender.sendMessage("You have been set as the streaming player! To set it to someone else, type /deathswap setstreamer <player>");
 				return true;
 			} else if (Bukkit.getServer().getPlayer(args[1]) != null) {
 				ds.streamingPlayer = Bukkit.getServer().getPlayer(args[1]);
@@ -68,6 +71,12 @@ public class CommandDeathSwap implements CommandExecutor{
 			return false;
 		case "help":
 			sender.sendMessage(help);
+			return true;
+		case "debug":
+			sender.sendMessage("In Game: " +ds.inGame);
+			if (ds.streamingPlayer != null) sender.sendMessage("Streaming Player: " + ds.streamingPlayer.getDisplayName());
+			if (ds.fighters[0] != null) sender.sendMessage("Fighter 0: " +ds.fighters[0].toString());
+			if (ds.fighters[1] != null) sender.sendMessage("Fighter 1: "+ds.fighters[1].toString());
 			return true;
 		default:
 			ds.getLogger().info("Unknown Command " + args[0]);

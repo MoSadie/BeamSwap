@@ -9,11 +9,16 @@ public class CountDownTask extends BukkitRunnable {
 	
 	public CountDownTask(DeathSwap ds, int count) {
 		plugin = ds;
+		ds.getLogger().info("CountDown Created!");
 		if (count > 0) countdown = count;
 	}
 	@Override
 	public void run() {
-		if (plugin.inGame == false) return;
+		if (plugin.inGame == false) {
+			plugin.getLogger().info("Not In Game");
+			return;
+		}
+		plugin.getLogger().info("CountDown: "+countdown);
 		if (countdown < 1) plugin.swap();
 		countdown--;
 	}

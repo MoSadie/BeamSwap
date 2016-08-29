@@ -6,11 +6,13 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -23,11 +25,12 @@ import io.github.mosadie.DeathSwap.commands.CommandDeathSwap;
 import pro.beam.interactive.net.packet.Protocol.Report;
 import pro.beam.interactive.net.packet.Protocol.Report.TactileInfo;
 
-public class DeathSwap extends JavaPlugin {
+public class DeathSwap extends JavaPlugin implements Listener {
 	public BeamBukkit bb = null;
 	public Player streamingPlayer;
-	public Player[] fighters;
-	public Location[] origLocation;
+	public Player[] fighters = {null,null};
+	public Location origPlayer1;
+	public Location origPlayer2;
 	public boolean inGame = false;
 	public int swapTime; //in seconds
 	private Scoreboard board;
@@ -36,6 +39,7 @@ public class DeathSwap extends JavaPlugin {
 	@Override
 	public void onEnable() {
 		this.getCommand("deathswap").setExecutor(new CommandDeathSwap(this));
+		getServer().getPluginManager().registerEvents(this, this);
 		
 		ScoreboardManager manager = Bukkit.getScoreboardManager();
 		board = manager.getNewScoreboard();
@@ -76,20 +80,23 @@ public class DeathSwap extends JavaPlugin {
 
 	@Override
 	public void onDisable() {
-		countdown.cancel();
+		if (countdown != null) countdown.cancel();
 	}
 	
 	public void startGame() {
-		origLocation[0] = fighters[0].getLocation();
-		origLocation[1] = fighters[1].getLocation();
-		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "achivement take * " + fighters[0]);
-		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "achivement take * " + fighters[1]);
-		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "spreadplayers 0 0 10000000 15000000 false " + fighters[0].getPlayerListName()+ " " + fighters[1].getPlayerListName());
+		origPlayer1 = fighters[0].getLocation();
+		origPlayer2 = fighters[1].getLocation();
+		
+		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "achievement take * " + fighters[0].getDisplayName());
+		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "achievement take * " + fighters[1].getDisplayName());
+		Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "spreadplayers 0 0 100000 15000000 false " + fighters[0].getPlayerListName()+ " " + fighters[1].getPlayerListName());
 		for (int i =0; i < fighters.length; i++) {
 			fighters[i].setGameMode(GameMode.SURVIVAL);
 			fighters[i].setScoreboard(board);
+			fighters[i].getInventory().clear();
 		}
 		inGame = true;
+		getLogger().info(bb.toString());
 		bb.updateState("in-game");//TODO Check name
 		Bukkit.getServer().broadcastMessage("Let the death swap begin!");
 		countdown = new CountDownTask(this, genRandomTime()).runTaskTimer(this,20,20);
@@ -98,23 +105,31 @@ public class DeathSwap extends JavaPlugin {
 	@EventHandler
 	public void onDeath(PlayerDeathEvent pde) {
 		Player deadPlayer = pde.getEntity();
+		if (!inGame) return;
 		if (deadPlayer != fighters[0] && deadPlayer != fighters[1]) return;
 		getLogger().info("End of match!");
 		//End of match!
 		countdown.cancel();
+		getLogger().info("Loser: "+deadPlayer.getDisplayName()+"!");
 		if (fighters[0] == deadPlayer) {
-			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title @a title {text:\"" + fighters[1] + " Wins!\",color:\"dark_purple\",bold:true,italic:true,underlined:true}");
+			getLogger().info("Winner: " + fighters[1].getDisplayName() + "!");
+			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title @a title {\"text\":\"" + fighters[1].getPlayerListName() + " Wins!\",\"color\":\"dark_purple\",\"bold\":true,\"italic\":true,\"underlined\":true}");
 		} else if (fighters[1] == deadPlayer) {
-			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title @a title {text:\"" + fighters[0] + " Wins!\",color:\"dark_purple\",bold:true,italic:true,underlined:true}");
+			getLogger().info("Winner: " + fighters[0].getDisplayName() + "!");
+			Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "title @a title {\"text\":\"" + fighters[0].getPlayerListName() + " Wins!\",\"color\":\"dark_purple\",\"bold\":true,\"italic\":true,\"underlined\":true}");
 		}
-		for (int i = 0; i<fighters.length;i++) {
-				fighters[i].teleport(origLocation[i]);
-			}
-		Player[] finalOnline = (Player[]) Bukkit.getOnlinePlayers().toArray();
+
+		Player[] finalOnline = Bukkit.getOnlinePlayers().toArray(new Player[0]);
 		for (int i = 0; i < finalOnline.length;i++) {
 			if (finalOnline[i].getGameMode() == GameMode.SPECTATOR) finalOnline[i].setGameMode(GameMode.CREATIVE);
-			finalOnline[i].teleport(origLocation[0]);
+			finalOnline[i].teleport(origPlayer1);
 		}
+		fighters[1].teleport(origPlayer2);
+		inGame = false;
+		fighters[0].getInventory().clear();
+		fighters[0] = null;
+		fighters[0].getInventory().clear();
+		fighters[1] = null;
 	}
 
 	public void swap() {
@@ -135,19 +150,19 @@ public class DeathSwap extends JavaPlugin {
 			if (streamingPlayer != null) {
 				if (fighters[0] == streamingPlayer | fighters[1] == streamingPlayer) {
 					streamingPlayer.getInventory().addItem(itemToGive);
-					streamingPlayer.chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
+					streamingPlayer.sendMessage("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.getItemMeta().getDisplayName() + " by the stream!");
 				}
 				else {
 					fighters[0].getInventory().addItem(itemToGive);
-					fighters[0].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
+					fighters[0].sendMessage("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.getItemMeta().getDisplayName() + " by the stream!");
 					fighters[1].getInventory().addItem(itemToGive);
-					fighters[1].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
+					fighters[1].sendMessage("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.getItemMeta().getDisplayName() + " by the stream!");
 				}
 			} else {
 				fighters[0].getInventory().addItem(itemToGive);
-				fighters[0].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
+				fighters[0].sendMessage("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.getItemMeta().getDisplayName() + " by the stream!");
 				fighters[1].getInventory().addItem(itemToGive);
-				fighters[1].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
+				fighters[1].sendMessage("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.getItemMeta().getDisplayName() + " by the stream!");
 			}
 		}
 	}
@@ -156,20 +171,25 @@ public class DeathSwap extends JavaPlugin {
 		if (inGame) {
 			if (streamingPlayer != null) {
 				if (fighters[0] == streamingPlayer | fighters[1] == streamingPlayer) {
-					streamingPlayer.addPotionEffect(effectToGive);
-					streamingPlayer.chat("You have been gifted " + effectToGive.toString() + " by the stream!");
+					new SyncPlayerTask(streamingPlayer,effectToGive).runTaskLater(this, 1);
+					//streamingPlayer.addPotionEffect(effectToGive);
+					streamingPlayer.sendMessage("You have been gifted " + effectToGive.getType().getName() + " by the stream!");
 				}
 				else {
-					fighters[0].addPotionEffect(effectToGive);
-					fighters[0].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
-					fighters[1].addPotionEffect(effectToGive);
-					fighters[1].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
+					new SyncPlayerTask(fighters[0],effectToGive).runTaskLater(this, 1);
+					//fighters[0].addPotionEffect(effectToGive);
+					fighters[0].sendMessage("You have been gifted " + effectToGive.getType().getName() + " by the stream!");
+					new SyncPlayerTask(fighters[1],effectToGive).runTaskLater(this, 1);
+					//fighters[1].addPotionEffect(effectToGive);
+					fighters[1].sendMessage("You have been gifted " + effectToGive.getType().getName() + " by the stream!");
 				}
 			} else {
-				fighters[0].addPotionEffect(effectToGive);
-				fighters[0].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
-				fighters[1].addPotionEffect(effectToGive);
-				fighters[1].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
+				new SyncPlayerTask(fighters[0],effectToGive).runTaskLater(this, 1);
+				//fighters[0].addPotionEffect(effectToGive);
+				fighters[0].sendMessage("You have been gifted " + effectToGive.getType().getName() + " by the stream!");
+				new SyncPlayerTask(fighters[1],effectToGive).runTaskLater(this, 1);
+				//fighters[1].addPotionEffect(effectToGive);
+				fighters[1].sendMessage("You have been gifted " + effectToGive.getType().getName() + " by the stream!");
 			}
 		}
 	}
@@ -181,4 +201,18 @@ public class DeathSwap extends JavaPlugin {
 	public int genRandomTime() {
 		return 30 + (int)(Math.random() * ((90 - 30) + 1));
 	}
+}
+
+class SyncPlayerTask extends BukkitRunnable {
+    Player p;
+    PotionEffect effect;
+   
+    SyncPlayerTask(Player player,PotionEffect potion) {
+        p = player;
+        effect = potion;
+    }
+       
+    public void run() {           
+        p.addPotionEffect(effect);
+    }
 }
