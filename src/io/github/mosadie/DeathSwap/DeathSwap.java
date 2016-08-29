@@ -1,16 +1,11 @@
 package io.github.mosadie.DeathSwap;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutionException;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -25,17 +20,10 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import io.github.mosadie.BeamBukkit.BeamBukkit;
 import io.github.mosadie.BeamBukkit.ReportEvent;
 import io.github.mosadie.DeathSwap.commands.CommandDeathSwap;
-import pro.beam.api.BeamAPI;
-import pro.beam.interactive.net.packet.Protocol;
 import pro.beam.interactive.net.packet.Protocol.Report;
 import pro.beam.interactive.net.packet.Protocol.Report.TactileInfo;
-import pro.beam.interactive.robot.Robot;
-import pro.beam.interactive.robot.RobotBuilder;
 
 public class DeathSwap extends JavaPlugin {
-	public FileConfiguration config = this.getConfig();
-	public BeamAPI beam;
-	public Robot beamRobot;
 	public BeamBukkit bb = null;
 	public Player streamingPlayer;
 	public Player[] fighters;
@@ -63,7 +51,7 @@ public class DeathSwap extends JavaPlugin {
 		if (report.getTactileCount() > 0) {
 			for (int i = 0; i < report.getTactileList().size();i++) {
 				TactileInfo button = report.getTactile(i);
-				if (button.getPressFrequency() > 1) {
+				if (button.getPressFrequency() >= 1) {
 					switch(button.getId()) {
 					case 0: //Swap Early
 						if (inGame) swap();
@@ -143,45 +131,45 @@ public class DeathSwap extends JavaPlugin {
 	}
 
 	public void giveItem(ItemStack itemToGive) {
-		if (game.inGame) {
-			if (game.streamingPlayer != null) {
-				if (game.fighters[0] == game.streamingPlayer | game.fighters[1] == game.streamingPlayer) {
-					game.streamingPlayer.getInventory().addItem(itemToGive);
-					game.streamingPlayer.chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
+		if (inGame) {
+			if (streamingPlayer != null) {
+				if (fighters[0] == streamingPlayer | fighters[1] == streamingPlayer) {
+					streamingPlayer.getInventory().addItem(itemToGive);
+					streamingPlayer.chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
 				}
 				else {
-					game.fighters[0].getInventory().addItem(itemToGive);
-					game.fighters[0].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
-					game.fighters[1].getInventory().addItem(itemToGive);
-					game.fighters[1].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
+					fighters[0].getInventory().addItem(itemToGive);
+					fighters[0].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
+					fighters[1].getInventory().addItem(itemToGive);
+					fighters[1].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
 				}
 			} else {
-				game.fighters[0].getInventory().addItem(itemToGive);
-				game.fighters[0].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
-				game.fighters[1].getInventory().addItem(itemToGive);
-				game.fighters[1].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
+				fighters[0].getInventory().addItem(itemToGive);
+				fighters[0].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
+				fighters[1].getInventory().addItem(itemToGive);
+				fighters[1].chat("You have been gifted " + itemToGive.getAmount() + " " + itemToGive.toString() + " by the stream!");
 			}
 		}
 	}
 
 	public void givePotionEffect(PotionEffect effectToGive) {
-		if (game.inGame) {
-			if (game.streamingPlayer != null) {
-				if (game.fighters[0] == game.streamingPlayer | game.fighters[1] == game.streamingPlayer) {
-					game.streamingPlayer.addPotionEffect(effectToGive);
-					game.streamingPlayer.chat("You have been gifted " + effectToGive.toString() + " by the stream!");
+		if (inGame) {
+			if (streamingPlayer != null) {
+				if (fighters[0] == streamingPlayer | fighters[1] == streamingPlayer) {
+					streamingPlayer.addPotionEffect(effectToGive);
+					streamingPlayer.chat("You have been gifted " + effectToGive.toString() + " by the stream!");
 				}
 				else {
-					game.fighters[0].addPotionEffect(effectToGive);
-					game.fighters[0].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
-					game.fighters[1].addPotionEffect(effectToGive);
-					game.fighters[1].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
+					fighters[0].addPotionEffect(effectToGive);
+					fighters[0].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
+					fighters[1].addPotionEffect(effectToGive);
+					fighters[1].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
 				}
 			} else {
-				game.fighters[0].addPotionEffect(effectToGive);
-				game.fighters[0].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
-				game.fighters[1].addPotionEffect(effectToGive);
-				game.fighters[1].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
+				fighters[0].addPotionEffect(effectToGive);
+				fighters[0].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
+				fighters[1].addPotionEffect(effectToGive);
+				fighters[1].chat("You have been gifted " + effectToGive.toString() + " by the stream!");
 			}
 		}
 	}
