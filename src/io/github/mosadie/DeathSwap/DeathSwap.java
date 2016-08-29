@@ -64,7 +64,7 @@ public class DeathSwap extends JavaPlugin implements Listener {
 						if (inGame) giveItem(new ItemStack(Material.LAVA_BUCKET,1));
 						break;
 					case 2: //Make Invulnerable
-						if (inGame) givePotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE,60,6));
+						if (inGame) givePotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE,120,6));
 						break;
 					case 3: //Instant food and hunger refill
 						if (inGame) {
