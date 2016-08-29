@@ -1,10 +1,10 @@
-name: BeamSwap
-main: io.github.mosadie.BeamSwap.BeamSwap
+name: DeathSwap
+main: io.github.mosadie.DeathSwap.DeathSwap
 version: 1.0
 author: MoSadie
 description: This plugin allows you to play the game death swap. It also has Beam Interactive support.
 commands:
-  beamswap:
+  deathswap:
     description: Main command of the plugin. Use arguments to control/configure game.
-    usage: /<command> <start or setstreamer or auth or help> <arguments>
-    aliases: bs
+    usage: /<command> <start or setstreamer or help> <arguments>
+    aliases: ds

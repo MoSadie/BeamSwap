@@ -8,17 +8,9 @@
         <id>spigot-repo</id>
         <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
-    <repository>
-            <id>Plugin Metrics</id>
-            <url>http://repo.mcstats.org/content/repositories/public</url>
-        </repository>
   <repository>
     <id>beam-snapshots</id>
     <url>https://maven.beam.pro/content/repositories/snapshots/</url>
-  </repository>
-  <repository>
-  	<id>google</id>
-  	<url>http://repo1.maven.org/maven2/com/google/protobuf/protoc/</url>
   </repository>
   </repositories>
   <dependencies>
@@ -36,28 +28,24 @@
             <version>1.10.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
     </dependency>
-    <dependency>
-            <groupId>org.mcstats.bukkit</groupId>
-            <artifactId>metrics</artifactId>
-            <version>R8-SNAPSHOT</version>
-        </dependency>
   <dependency>
     <groupId>pro.beam</groupId>
     <artifactId>api</artifactId>
     <version>2.2.1-SNAPSHOT</version>
+    <scope>provided</scope>
   </dependency>
   <dependency>
       <groupId>pro.beam</groupId>
       <artifactId>interactive</artifactId>
       <version>1.5.1-SNAPSHOT</version>
-      <scope>compile</scope>
+      <scope>provided</scope>
     </dependency>
-    <dependency>
-    	<groupId>com.google.protobuf</groupId>
-        <artifactId>protobuf-java</artifactId>
-        <version>3.0.0-beta-1</version>
-        <scope>compile</scope>
-    </dependency>
+  <dependency>
+  	<groupId>io.github.mosadie</groupId>
+  	<artifactId>beambukkit</artifactId>
+  	<version>0.0.1-SNAPSHOT</version>
+  	<scope>provided</scope>
+  </dependency>
   </dependencies>
   <build>
     <sourceDirectory>src</sourceDirectory>
@@ -71,31 +59,21 @@
         </configuration>
       </plugin>
       <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <artifactSet>
-                        <includes>
-                            <include>org.mcstats.*:*</include>
-                        </includes>
-                    </artifactSet>
-                    <relocations>
-                        <relocation>
-                            <pattern>org.mcstats</pattern>
-                            <shadedPattern>io.github.mosadie.DeathSwap</shadedPattern>
-                        </relocation>
-                    </relocations>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>2.4.3</version>
+        <configuration>
+          <!-- put your configurations here -->
+        </configuration>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 </project>
