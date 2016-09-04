@@ -1,7 +1,5 @@
 package io.github.mosadie.DeathSwap.commands;
 
-import java.util.concurrent.ExecutionException;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,7 +7,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import io.github.mosadie.DeathSwap.DeathSwap;
-import pro.beam.interactive.robot.RobotBuilder;
 
 public class CommandDeathSwap implements CommandExecutor{
 	private DeathSwap ds;
@@ -58,6 +55,10 @@ public class CommandDeathSwap implements CommandExecutor{
 			
 			return true;
 		case "setstreamer":
+			if (ds.bb.isPresent() == false) {
+				sender.sendMessage("BeamBukkit is not installed! Not setting streaming player!");
+				return true;
+			}
 			if (args.length < 2 && sender instanceof Player) {
 				ds.setStreamer((Player)sender);
 				sender.sendMessage("You have been set as the streaming player! To set it to someone else, type /deathswap setstreamer <player>");
