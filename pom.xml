@@ -2,48 +2,32 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>DeathSwap</groupId>
   <artifactId>DeathSwap</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.0.1-SNAPSHOT</version>
   <repositories>
   <repository>
         <id>spigot-repo</id>
         <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
     </repository>
-  <repository>
-    <id>beam-snapshots</id>
-    <url>https://maven.beam.pro/content/repositories/snapshots/</url>
-  </repository>
   </repositories>
   <dependencies>
   <!--Spigot API-->
     <dependency>
            <groupId>org.spigotmc</groupId>
            <artifactId>spigot-api</artifactId>
-           <version>1.10.2-R0.1-SNAPSHOT</version>
+           <version>1.12.1-R0.1-SNAPSHOT</version>
            <scope>provided</scope>
     </dependency>
     <!--Bukkit API-->
     <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.10.2-R0.1-SNAPSHOT</version>
+            <version>1.12.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
     </dependency>
   <dependency>
-    <groupId>pro.beam</groupId>
-    <artifactId>api</artifactId>
-    <version>2.2.1-SNAPSHOT</version>
-    <scope>provided</scope>
-  </dependency>
-  <dependency>
-      <groupId>pro.beam</groupId>
-      <artifactId>interactive</artifactId>
-      <version>1.5.1-SNAPSHOT</version>
-      <scope>provided</scope>
-    </dependency>
-  <dependency>
   	<groupId>io.github.mosadie</groupId>
-  	<artifactId>beambukkit</artifactId>
-  	<version>0.0.1-SNAPSHOT</version>
+  	<artifactId>mixbukkit</artifactId>
+  	<version>1.0.1-SNAPSHOT</version>
   	<scope>provided</scope>
   </dependency>
   </dependencies>

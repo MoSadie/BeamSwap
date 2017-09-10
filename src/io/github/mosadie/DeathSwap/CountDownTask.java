@@ -22,5 +22,9 @@ public class CountDownTask extends BukkitRunnable {
 		if (countdown < 1) plugin.swap();
 		countdown--;
 	}
+	
+	public int getCountdown() {
+		return countdown;
+	}
 
 }
